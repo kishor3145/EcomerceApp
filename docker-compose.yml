@@ -1,23 +1,6 @@
 version: '3.8'
 
 services:
-  mysqldb:
-    image: mysql:8
-    container_name: mysqldb
-    restart: always
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: Root@1234
-      MYSQL_DATABASE: ecommerce_springboot
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pRoot@1234"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    networks:
-      - ecommerce-network
-
   customer:
     build: ./Customer
     ports:
@@ -34,11 +17,6 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
       - SERVER_PORT=${CUSTOMER_PORT}
-    depends_on:
-      mysqldb:
-        condition: service_healthy
-    networks:
-      - ecommerce-network
 
   admin:
     build: ./Admin
@@ -56,11 +34,6 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
       - SERVER_PORT=${ADMIN_PORT}
-    depends_on:
-      mysqldb:
-        condition: service_healthy
-    networks:
-      - ecommerce-network
 
   delivery:
     build: ./Delivery
@@ -78,11 +51,3 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
       - SERVER_PORT=${DELIVERY_PORT}
-    depends_on:
-      mysqldb:
-        condition: service_healthy
-    networks:
-      - ecommerce-network
-
-networks:
-  ecommerce-network:
